@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4><i class="bi bi-speedometer2 me-2"></i>Dashboard</h4>
+    <a href="{{ url_for('transactions.add') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>Add Transaction
+    </a>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card stat-card income-card">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon">
+                    <i class="bi bi-arrow-down-circle"></i>
+                </div>
+                <div class="ms-3">
+                    <p class="stat-label">Monthly Income</p>
+                    <p class="stat-value text-success">${{ "%.2f"|format(monthly_income) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card stat-card expense-card">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon">
+                    <i class="bi bi-arrow-up-circle"></i>
+                </div>
+                <div class="ms-3">
+                    <p class="stat-label">Monthly Expenses</p>
+                    <p class="stat-value text-danger">${{ "%.2f"|format(monthly_expenses) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card stat-card balance-card">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <div class="ms-3">
+                    <p class="stat-label">Monthly Balance</p>
+                    <p class="stat-value {% if balance >= 0 %}text-info{% else %}text-danger{% endif %}">${{ "%.2f"|format(balance) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card stat-card total-card">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon">
+                    <i class="bi bi-piggy-bank"></i>
+                </div>
+                <div class="ms-3">
+                    <p class="stat-label">Total Balance</p>
+                    <p class="stat-value {% if total_balance >= 0 %}text-primary{% else %}text-danger{% endif %}">${{ "%.2f"|format(total_balance) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+    <div class="col-md-8">
+        <div class="chart-card">
+            <h6><i class="bi bi-graph-up me-2"></i>Daily Spending (Last 7 Days)</h6>
+            <canvas id="dailyChart" height="200"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="chart-card">
+            <h6><i class="bi bi-pie-chart me-2"></i>Expense Breakdown</h6>
+            {% if category_breakdown %}
+                <canvas id="categoryChart" height="200"></canvas>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-pie-chart"></i>
+                    <p>No expense data yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="row">
+    <div class="col-12">
+        <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Transactions</h6>
+                <a href="{{ url_for('transactions.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            {% if recent_transactions %}
+                {% for tx in recent_transactions %}
+                <div class="transaction-item">
+                    <div class="tx-icon" style="background-color: {{ tx.category.color }}20;">
+                        <i class="bi {{ tx.category.icon }}" style="color: {{ tx.category.color }};"></i>
+                    </div>
+                    <div class="tx-details">
+                        <p class="tx-desc">{{ tx.description }}</p>
+                        <p class="tx-category">{{ tx.category.name }} &middot; {{ tx.date.strftime('%b %d, %Y') }}</p>
+                    </div>
+                    <span class="tx-amount {{ tx.transaction_type }}">
+                        {% if tx.transaction_type == 'income' %}+{% else %}-{% endif %}${{ "%.2f"|format(tx.amount) }}
+                    </span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>No transactions yet. Add your first one!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Daily Spending Chart
+const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+new Chart(dailyCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ daily_labels|tojson }},
+        datasets: [{
+            label: 'Spending',
+            data: {{ daily_values|tojson }},
+            backgroundColor: 'rgba(102, 126, 234, 0.6)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { callback: v => '$' + v } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+{% if category_breakdown %}
+// Category Breakdown Chart
+const catCtx = document.getElementById('categoryChart').getContext('2d');
+new Chart(catCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ category_breakdown|map(attribute=0)|list|tojson }},
+        datasets: [{
+            data: {{ category_breakdown|map(attribute=2)|list|tojson }},
+            backgroundColor: {{ category_breakdown|map(attribute=1)|list|tojson }},
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } }
+        }
+    }
+});
+{% endif %}
+</script>
+{% endblock %}

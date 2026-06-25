@@ -1,0 +1,222 @@
+/* ===== Global Styles ===== */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== Auth Pages ===== */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.auth-card h2 {
+    color: #333;
+    font-weight: 700;
+}
+
+/* ===== Dashboard Cards ===== */
+.stat-card {
+    border: none;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.stat-card .stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stat-card .stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+.income-card .stat-icon { background-color: #d4edda; color: #28a745; }
+.expense-card .stat-icon { background-color: #f8d7da; color: #dc3545; }
+.balance-card .stat-icon { background-color: #d1ecf1; color: #17a2b8; }
+.total-card .stat-icon { background-color: #e2e3f1; color: #6f42c1; }
+
+/* ===== Chart Containers ===== */
+.chart-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    background: white;
+}
+
+.chart-card h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* ===== Transaction List ===== */
+.transaction-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.15s;
+}
+
+.transaction-item:hover {
+    background-color: #f8f9fa;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-item .tx-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.transaction-item .tx-details {
+    flex: 1;
+    margin-left: 0.75rem;
+}
+
+.transaction-item .tx-desc {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333;
+    margin: 0;
+}
+
+.transaction-item .tx-category {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+.transaction-item .tx-amount {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.tx-amount.income { color: #28a745; }
+.tx-amount.expense { color: #dc3545; }
+
+/* ===== Page Headers ===== */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.page-header h4 {
+    font-weight: 700;
+    color: #333;
+}
+
+/* ===== Tables ===== */
+.table-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    background: white;
+    overflow: hidden;
+}
+
+/* ===== Forms ===== */
+.form-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    background: white;
+    padding: 2rem;
+}
+
+/* ===== Filter Bar ===== */
+.filter-bar {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+}
+
+/* ===== Period Tabs ===== */
+.period-tabs .btn {
+    border-radius: 20px;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* ===== Pagination ===== */
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: none;
+    color: #495057;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+/* ===== Responsive Tweaks ===== */
+@media (max-width: 768px) {
+    .stat-card .stat-value {
+        font-size: 1.3rem;
+    }
+
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
